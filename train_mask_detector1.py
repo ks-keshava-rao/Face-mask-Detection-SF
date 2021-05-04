@@ -78,22 +78,19 @@ headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
 headModel = Dense(2, activation="softmax")(headModel)
 
-# place the head FC model on top of the base model (this will become
-# the actual model we will train)
+
 model = Model(inputs=baseModel.input, outputs=headModel)
 
-# loop over all layers in the base model and freeze them so they will
-# *not* be updated during the first training process
+
 for layer in baseModel.layers:
 	layer.trainable = False
 
-# compile our model
-print("[INFO] compiling model...")
+
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
-# train the head of the network
+
 
 H = model.fit(
 	aug.flow(trainX, trainY, batch_size=BS),
@@ -102,7 +99,7 @@ H = model.fit(
 	validation_steps=len(testX) // BS,
 	epochs=EPOCHS)
 
-# make predictions on the testing set
+
 
 predIdxs = model.predict(testX, batch_size=BS)
 
